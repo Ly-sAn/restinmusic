@@ -22,8 +22,7 @@ public class SongRepository implements ISongRepository {
         return list.size();
     }
 
-    public List<Song> getAll(HashMap<String, Object> paramsList) {
-
+    public List<Song> searchSongs(HashMap<String, Object> paramsList) {
 
         String query = "SELECT id, name, artist, category, duration ," +
                 " release_date as releaseDate, album_id as albumId FROM song ";
@@ -58,6 +57,46 @@ public class SongRepository implements ISongRepository {
         }
 
         return jbcdTemplate.query(query, BeanPropertyRowMapper.newInstance(Song.class));
+    }
+
+    public List<Song> getAll(HashMap<String, Object> paramsList) {
+
+        String query = "SELECT id, name, artist, category, duration ," +
+                " release_date as releaseDate, album_id as albumId FROM song ";
+
+        List<String> columns = Arrays.asList("name", "artist", "category", "duration", "release_date");
+        List<Object> toSendParams = new ArrayList<Object>();
+
+        String clauses = "";
+
+        for (var entry : paramsList.entrySet()) {
+            if (!columns.contains(entry.getKey())){
+                continue;
+            }
+            clauses += entry.getKey() + " = ? AND ";
+            toSendParams.add(entry.getValue());
+        }
+
+        if (!toSendParams.isEmpty()){
+            query+= " WHERE " + clauses;
+            query = query.substring(0, query.length() -5);
+        }
+
+        if (paramsList.containsKey("asc") || paramsList.containsKey("desc")) {
+            if (paramsList.get("asc") != null && paramsList.get("desc") != null) {
+                query += " ORDER BY " + paramsList.get("asc") + " ASC, " + paramsList.get("desc") + " DESC";
+                System.out.println(query);
+            } else if (paramsList.get("desc") != null) {
+                query += " ORDER BY " + paramsList.get("desc") + " DESC";
+            } else if (paramsList.get("asc") != null) {
+                query += " ORDER BY " + paramsList.get("asc") + " ASC";
+            }
+        }
+
+        if (toSendParams.isEmpty()){
+            return jbcdTemplate.query(query, BeanPropertyRowMapper.newInstance(Song.class));
+        }
+        return jbcdTemplate.query(query, BeanPropertyRowMapper.newInstance(Song.class), toSendParams.toArray());
     }
 
     public Song getOneById(int id) {

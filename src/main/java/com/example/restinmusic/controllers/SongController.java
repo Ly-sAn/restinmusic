@@ -30,6 +30,15 @@ public class SongController {
         List<Song> list = songRepository.getAll(paramsList);
         return new ResponseEntity<>(list,HttpStatus.OK);
     }
+
+    @GetMapping(value = "/search")
+    public ResponseEntity<List> searchSongs(
+            @RequestParam(required = false) HashMap<String, Object> paramsList
+    ){
+        List<Song> list = songRepository.searchSongs(paramsList);
+        return new ResponseEntity<>(list,HttpStatus.OK);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Song> getOneById(@PathVariable int id){
         Song song = songRepository.getOneById(id);
@@ -103,7 +112,7 @@ public class SongController {
         }
 
         HttpHeaders responseHeader = new HttpHeaders();
-        responseHeader.set("Content-Range", range);
+        responseHeader.set("Content-Range", range + "/" + listSize);
         responseHeader.set("Accepted-Range", String.valueOf(total));
         responseHeader.set("Link", link);
 
