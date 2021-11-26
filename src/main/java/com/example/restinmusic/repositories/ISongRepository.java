@@ -6,13 +6,14 @@ import org.springframework.stereotype.Repository;
 import org.springframework.data.domain.Pageable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 @Repository
 public interface ISongRepository{
 
     public int getSize();
-    public List<Song> getAll(String asc, String desc, Integer id, String name, String artist, String category, String duration, Date releaseDate, Integer albumId);
+    public List<Song> getAll(HashMap<String, Object> paramsList);
     public Song getOneById(int id);
     public int deleteOneById(int id);
     public int createOne(Song song);

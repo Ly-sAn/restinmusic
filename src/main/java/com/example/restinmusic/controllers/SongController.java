@@ -6,9 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
 
+import javax.management.modelmbean.RequiredModelMBean;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -23,17 +25,9 @@ public class SongController {
 
     @GetMapping(value = "")
     public ResponseEntity<List> getSongs(
-            @RequestParam(required = false) String asc ,
-            @RequestParam(required = false) String desc,
-            @RequestParam(required = false) Integer id,
-            @RequestParam(required = false) String name,
-            @RequestParam(required = false) String artist,
-            @RequestParam(required = false) String category,
-            @RequestParam(required = false) String duration,
-            @RequestParam(required = false) Date releaseDate ,
-            @RequestParam(required = false) Integer albumId
+            @RequestParam(required = false) HashMap<String, Object> paramsList
     ){
-        List<Song> list = songRepository.getAll(asc,desc, id, name, artist, category, duration, releaseDate, albumId);
+        List<Song> list = songRepository.getAll(paramsList);
         return new ResponseEntity<>(list,HttpStatus.OK);
     }
     @GetMapping("/{id}")
