@@ -19,4 +19,5 @@ public interface ISongRepository{
     public int createOne(Song song);
     public int updateOneById(int id, Song song);
     public List<Song> getAllRanged(int from, int to);
+    List<Song> searchSongs(HashMap<String, Object> paramsList);
 }
